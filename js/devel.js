@@ -1,0 +1,39 @@
+/*
+SELECT  `function` ,`iteracio`, SUM( TIME ) , COUNT( * ) , 1000 * SUM( TIME ) / COUNT( * ) 
+FROM  `simple` 
+GROUP BY  `function` , `iteracio`
+ORDER BY `function`
+*/
+
+function JSProfiler () {
+    this.t = new Array();
+    this.active = false;
+    this.scale = 1000.0;
+}
+
+JSProfiler.prototype.microtime = function (get_as_float) {
+  // http://kevin.vanzonneveld.net
+  // +   original by: Paulo Freitas
+  // *     example 1: timeStamp = microtime(true);
+  // *     results 1: timeStamp > 1000000000 && timeStamp < 2000000000
+  var now = new Date().getTime() / 1000;
+  var s = parseInt(now, 10);
+
+  return (get_as_float) ? now : (Math.round((now - s) * 1000) / 1000) + ' ' + s;
+}
+
+JSProfiler.prototype.start = function (msg) {
+    this.t[msg] = this.microtime(true);
+};
+
+JSProfiler.prototype.compute = function (msg) {
+    var dt = this.microtime(true) - this.t[msg];
+    //dt = dt * this.scale;
+    if ( this.active ) { console.log(msg+" "+dt); }
+};
+
+JSProfiler.prototype.stop = function () {
+    throw "stop";
+};
+
+var JSP = new JSProfiler();
