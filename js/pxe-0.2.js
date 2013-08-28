@@ -220,6 +220,7 @@ if (PXE === undefined) {
         PXE.Els.prototype.remove = function (idEl) {
             //jsp//JSP.start("Els-remove");
             if (PXE.Els.data[idEl] !== undefined) {
+                PXE.Els.data[idEl].removeConns();
                 PXE.Els.data[idEl] = undefined;
                 PXE.Els.length -= 1;
                 //PXE.Els.data.splice(idEl,1);
@@ -233,11 +234,16 @@ if (PXE === undefined) {
             return this.data[idEl];
         };
         
+        PXE.Els.prototype.exist = function (idEl) {
+            return (typeof this.data[idEl] !== "undefined");
+        };
+
+
         PXE.Els = new PXE.Els();
 
         // 
         /**
-         * @class Layers Conte tots els elements ordenats per capa de profunditat per donar l'efecte de una ficitica tercera dimensió
+         * @class Layers Conte tots els elements ordenats per capa de profunditat per donar l'efecte de una ficiticia tercera dimensió
          *
          */
         PXE.Layers = function () {
@@ -340,7 +346,7 @@ if (PXE === undefined) {
                     return (elem !== idEl);
                 }
             );
-        
+
             return true;
         };
         
@@ -512,11 +518,11 @@ if (PXE === undefined) {
                 var lvlErase = [], lvl =this.ConnectionsIterator.first;
                 //this.Connections.forEach(function (arrLvl, lvl) {
                 for (; this.Connections[lvl].next !== null; lvl = this.Connections[lvl].next) {
-                    this.Connections[lvl].d[con] = this.Connections[lvl].d[con].
+                    this.Connections[lvl].d = this.Connections[lvl].d.
                         filter(function (element, index, array) {
                             return element.id !== idEl;
                         });
-                    if (this.Connections[lvl].d[con].length <= 0) {
+                    if (this.Connections[lvl].d.length <= 0) {
                         lvlErase.push(lvl);
                     }
                 }
@@ -525,6 +531,16 @@ if (PXE === undefined) {
                     this.ConnectionsIterator.remove(lvlErase[lvl]);
                 }
             };
+            sprite.removeConns = function () {
+                var lvl = this.ConnectionsIterator.first, con;
+                for (; this.Connections[lvl].next !== null; lvl = this.Connections[lvl].next) {
+                    for (con = this.Connections[lvl].d.length - 1; con >= 0; con -= 1) {
+                        this.Connections[lvl].d[con].remove();
+                        this.removeConn(con);
+                    }
+                }
+            }
+ 
 
             if (typeof sprite.remove === "function") {
                 sprite.removeParent = sprite.remove;
@@ -532,15 +548,6 @@ if (PXE === undefined) {
                 sprite.removeParent = function () {};
             }
             sprite.remove = function () {
-                var lvl = this.ConnectionsIterator.first, con;
-                //this.removeParent();
-                for (; this.Connections[lvl].next !== null; lvl = this.Connections[lvl].next) {
-                    for (con = this.Connections[lvl].length - 1; con >= 0; con -= 1) {
-                        this.Connections[lvl].d[con].remove();
-                        this.removeConn(con);
-                    }
-                }
-        
                 PXE.Els.remove(this.id);
             };
         

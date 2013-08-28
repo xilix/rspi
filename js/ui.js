@@ -94,7 +94,7 @@ function uiControl($scope,$compile) {
             error["data"] = false;
         });
 
-        $scope.nom = isNumberIfNotDef(d.n, $scope.nom);
+        $scope.nom = d.n;
         $scope.cut.width = isNumberIfNotDef(d.d.w, $scope.cut.width);
         $scope.cut.height = isNumberIfNotDef(d.d.h, $scope.cut.height);
         $scope.cut.offset.x = isNumberIfNotDef(d.d.o.x, $scope.cut.offset.x);
@@ -122,7 +122,7 @@ function uiControl($scope,$compile) {
     });
 
     $scope.$watch('nom', function (val) {
-        swapPantalla(val); 
+        changeData(); 
     });
 
     $scope.$watch('pantalla', function (val) {
@@ -284,10 +284,10 @@ function uiControl($scope,$compile) {
                 $scope.cut.offset.y = macroPxRoundThr($scope.cut.offset.y);
                 break;
             case "macroPixel":
-                $scope.cut.width = macroPxRoundThr($scope.cut.width);
+                /*$scope.cut.width = macroPxRoundThr($scope.cut.width);
                 $scope.cut.height = macroPxRoundThr($scope.cut.height);
                 $scope.cut.offset.x = macroPxRoundThr($scope.cut.offset.x);
-                $scope.cut.offset.y = macroPxRoundThr($scope.cut.offset.y);
+                $scope.cut.offset.y = macroPxRoundThr($scope.cut.offset.y);*/
                 break;
             default:
                 $scope.cut[t] = macroPxRoundThr($scope.cut[t]);
@@ -346,7 +346,8 @@ function uiControl($scope,$compile) {
 
     function resetGrid () {
         var step = $scope.macroPixel;
-        if (grid !== null) { PXE.Els.remove(grid); }
+        if (grid !== null) { PXE.Els.get(grid).remove(); }
+        grid = null;
 
         if (
             angular.isNumber($scope.macroPixel) &&
@@ -364,6 +365,7 @@ function uiControl($scope,$compile) {
                     )
                 )
             );
+            PXE.Els.get(grid).name = "grid";
         }
     }
 
@@ -386,9 +388,9 @@ function uiControl($scope,$compile) {
             }, t = $scope.cut.time, 
             bx = $scope.backOffset.back.x, by = $scope.backOffset.back.y;
 
-        if (cut !== null) { PXE.Els.remove(cut); }
-        if (anim !== null) { PXE.Els.remove(anim); }
-        if (back !== null) { PXE.Els.remove(back); }
+        if (cut !== null) { PXE.Els.get(cut).remove(); }
+        if (anim !== null) { PXE.Els.get(anim).remove(); }
+        if (back !== null) { PXE.Els.get(back).remove(); }
         anim = null;
         cut = null;
         back = null;
@@ -419,10 +421,10 @@ function uiControl($scope,$compile) {
                         "sprite_sheet" : $scope.spriteSheetUrl, 
                         "frame_size" : [w, h],
                         "frame_duration" : t,
-                        "offset" : {"x":off.x,"y":off.y},
+                        "offset" : {"x":off.x, "y":off.y},
                         "orientation" : orientation() 
                     },
-                    {x:0, y:0, ind: {"begin": i, "end": iMax}}
+                    {x:25, y:25, ind: {"begin": i, "end": iMax}}
                 )
             );
             PXE.Els.get(anim).addAnim("cut");
@@ -450,7 +452,7 @@ function uiControl($scope,$compile) {
                         z : -1
                     });
                 }
-
+                PXE.Els.get(cut).name = "cutBox";
             } else {
                 cut = PXE.Layers.add(10,
                     PXE.newElem(new Box(
@@ -468,10 +470,11 @@ function uiControl($scope,$compile) {
                         z : -1
                     });
                 }
+                PXE.Els.get(cut).name = "cutBox";
             }
         }
-        resetGrid();
 
+        resetGrid();
         changeData();
     }
 

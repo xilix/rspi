@@ -76,28 +76,28 @@ PXE = (function (PXE) {
         
         objSprite.run = function (state) {
             //jsp//JSP.start("sprite-run");
-            var lvl = this.ConnectionsIterator.first, con;
+            var lvl = objSprite.ConnectionsIterator.first, con;
             objSprite.states.run(state);
 
             //this.Connections.forEach(function (arrLvl, lvl) {
-            for (; this.Connections[lvl].next !== null; lvl = this.Connections[lvl].next) {
-                if (this.Connections[lvl].d === undefined) { continue; }
-                for (con = this.Connections[lvl].d.length - 1; con >= 0; con -= 1) {
-                    PXE.Els.data[this.Connections[lvl].d[con].el].run(state);
+            for (; objSprite.Connections[lvl].next !== null; lvl = objSprite.Connections[lvl].next) {
+                if (objSprite.Connections[lvl].d === undefined) { continue; }
+                for (con = objSprite.Connections[lvl].d.length - 1; con >= 0; con -= 1) {
+                    PXE.Els.data[objSprite.Connections[lvl].d[con].el].run(state);
                 }
             }
             //jsp//JSP.compute("sprite-run");
         };
         objSprite.jump = function (state) {
             //jsp//JSP.start("sprite-jump");
-            var lvl = this.ConnectionsIterator.first, con;
+            var lvl = objSprite.ConnectionsIterator.first, con;
             if (objSprite.states.state !== state) {
                 objSprite.states.jump(state);
             }
-            for (; this.Connections[lvl].next !== null && lvl < 10; lvl = this.Connections[lvl].next) {
-                if (this.Connections[lvl].d === undefined) { continue; }
-                for (con = this.Connections[lvl].d.length - 1; con >= 0; con -= 1) {
-                    PXE.Els.data[this.Connections[lvl].d[con].el].jump(state);
+            for (; objSprite.Connections[lvl].next !== null && lvl < 10; lvl = objSprite.Connections[lvl].next) {
+                if (objSprite.Connections[lvl].d === undefined) { continue; }
+                for (con = objSprite.Connections[lvl].d.length - 1; con >= 0; con -= 1) {
+                    PXE.Els.data[objSprite.Connections[lvl].d[con].el].jump(state);
                 }
             }
             //jsp//JSP.compute("sprite-jump");

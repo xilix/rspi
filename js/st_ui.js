@@ -71,7 +71,7 @@ st["ui"] = {
                 PXE.Layers.run(dt);
                 // controles
                 if(jaws.pressed("left_mouse_button")){
-                   if (PXE.ui.fun.shiftKey) {
+                   if (PXE.ui.fun.ctrlKey) {
                       angMsg.send("backOffset.x",jaws.mouse_x);
                       angMsg.send("backOffset.y",jaws.mouse_y);
                       this.ctx.attr("class", "canvas-moving");
