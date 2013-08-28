@@ -24,7 +24,7 @@ function SpriteSheet(img)
                 this.isLoaded = true;
             }
         } catch (e) {
-            //console.log(img + " not found");
+            console.log(img + " not found");
         }
     };
 }
@@ -35,6 +35,7 @@ var sprtSheet = new SpriteSheet();
 st["ui"] = [];
 st["ui"] = {
     "general-state" : function () {
+        this.ctx = $('#draw');
         this.img = null;
         this.posBack = {x:0,y:0};
 
@@ -73,12 +74,16 @@ st["ui"] = {
                    if (PXE.ui.fun.shiftKey) {
                       angMsg.send("backOffset.x",jaws.mouse_x);
                       angMsg.send("backOffset.y",jaws.mouse_y);
+                      this.ctx.attr("class", "canvas-moving");
                    } else {
                        angMsg.send("dragCut",{
                            "x": jaws.mouse_x, 
                            "y": jaws.mouse_y
                        });
+                       this.ctx.attr("class", "canvas-dragging");
                    }
+                } else {
+                    this.ctx.attr("class", "canvas-move");
                 }
             }
         }

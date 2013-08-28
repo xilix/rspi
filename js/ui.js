@@ -46,11 +46,11 @@ function uiControl($scope,$compile) {
     var anim = null;
     var error = [];
 
-    function parseData (str) {
-        // TODO: Parse str with JSON stingigy and set the scope with it
-        // TODO: restCut when this happens. Be careful not to recursively 
-        //       call changeData if this is binded to nd-model="data"
+    function resetBackOffset () {
+        $scope.backOffset.mouse = {"x":0,"y":0};
+        $scope.backOffset.back = {"x":0,"y":0};
     }
+    resetBackOffset();
 
     function changeData () {
         var str = '{"n":"'+ $scope.nom;
@@ -181,6 +181,7 @@ function uiControl($scope,$compile) {
     });
 
     $scope.$watch('imgLoaded', function (val) {
+       
        resetCut();
        swapPantalla($scope.pantalla);
     });
@@ -196,6 +197,7 @@ function uiControl($scope,$compile) {
     });
 
     $scope.setImgLoaded = function (value) {
+        resetBackOffset();
         safeApply(function () {
             $scope.imgLoaded = value;
         });

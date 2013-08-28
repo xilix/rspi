@@ -74,6 +74,15 @@
         textarea {
             resize: none;
         }
+        .canvas-normal {
+            cursor: default !important;
+        }
+        .canvas-dragging {
+            cursor: pointer !important;
+        }
+        .canvas-moving {
+            cursor: move !important;
+        }
         .zoom-box{
             text-align: center;
             width: 40px;
@@ -209,7 +218,7 @@
         </div>
 
         <div class="container general-content" id="tabSprite" style="display: none;">
-            <canvas width="1024" height="768" id="draw"></canvas>
+            <canvas width="1024" height="768" id="draw" class="canvas-normal"></canvas>
         </div>
         <div class="container general-content" id="tabData" style="display: none;">
             <h3>Datos del recorte</h3>
