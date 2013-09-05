@@ -82,6 +82,22 @@ st["ui"] = {
                        });
                        this.ctx.attr("class", "canvas-dragging");
                    }
+                } else if (jaws.pressed("left")) {
+                    angMsg.send("cut.offset", {"x": -1, "y": 0});
+                } else if (jaws.pressed("right")) {
+                    angMsg.send("cut.offset", {"x": 1, "y": 0});
+                } else if (jaws.pressed("up")) {
+                    angMsg.send("cut.offset", {"x": 0, "y": -1});
+                } else if (jaws.pressed("down")) {
+                    angMsg.send("cut.offset", {"x": 0, "y": 1});
+                } else if (jaws.pressed("a")) {
+                    angMsg.send("backOffset", {"x": -1, "y": 0});
+                } else if (jaws.pressed("d")) {
+                    angMsg.send("backOffset", {"x": 1, "y": 0});
+                } else if (jaws.pressed("w")) {
+                    angMsg.send("backOffset", {"x": 0, "y": -1});
+                } else if (jaws.pressed("s")) {
+                    angMsg.send("backOffset", {"x": 0, "y": 1});
                 } else {
                     this.ctx.attr("class", "canvas-move");
                 }

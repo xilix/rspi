@@ -181,7 +181,6 @@ function uiControl($scope,$compile) {
     });
 
     $scope.$watch('imgLoaded', function (val) {
-       
        resetCut();
        swapPantalla($scope.pantalla);
     });
@@ -193,6 +192,12 @@ function uiControl($scope,$compile) {
 
     $scope.$watch('zoom', function (val) {
         $scope.zoom = parseInt(val);
+        $scope.backOffset.back.x = - $scope.cut.offset.x + 2 * Math.max(
+            1, isNumberIfNotDef($scope.macroPixel, 1)
+        );
+        $scope.backOffset.back.y = - $scope.cut.offset.y + 2 * Math.max(
+            1, isNumberIfNotDef($scope.macroPixel, 1)
+        );
         resetCut();
     });
 
@@ -206,6 +211,13 @@ function uiControl($scope,$compile) {
     $scope.setPantalla = function (value) {
         safeApply(function () {
             $scope.pantalla = value;
+        });
+    };
+
+    $scope.setBackOffset = function (value) {
+        safeApply(function () {
+            $scope.backOffset.back.x = $scope.backOffset.back.x + value.x;
+            $scope.backOffset.back.y = $scope.backOffset.back.y + value.y;
         });
     };
 
@@ -236,6 +248,17 @@ function uiControl($scope,$compile) {
                 - isNumberIfNotDef($scope.cut[typ], defCut[typ])
             ) / $scope.zoom) - $scope.backOffset.back[backOff];
     }
+
+    $scope.setOffset = function (pos) {
+        safeApply(function () {
+            $scope.cut.offset.x = isNumberIfNotDef(
+                $scope.cut.offset.x, defCut.offset.x
+            ) + pos.x;
+            $scope.cut.offset.y = isNumberIfNotDef(
+                $scope.cut.offset.y, defCut.offset.y
+            ) + pos.y;
+        });
+    };
 
     $scope.dragCut = function (pos) {
         safeApply(function () {
@@ -513,6 +536,12 @@ function AngMsg(DOMcontroller) {
             case "pantalla":
                 this.scope.setPantalla(msg);
             break;
+            case "cut.offset":
+                this.scope.setOffset(msg);
+            break;
+            case "backOffset":
+                this.scope.setBackOffset(msg);
+            break;
             case "backOffset.x":
                 this.scope.setBackOffsetX(msg);
             break;
@@ -527,95 +556,3 @@ function AngMsg(DOMcontroller) {
 }
 var angMsg = new AngMsg("body");
 
-function zoom(maxPasos,minimZoom,pasoZoom){
-    this.nivel = maxPasos;
-    this.mapa = null;
-    this.maxLevel = maxPasos;
-    this.minLevel = 1;
-    this.paso = pasoZoom;
-    this.nivel0 = minimZoom+(this.maxLevel-1)*this.paso;
-    this.prefZoomId = "zoom_";
-
-    this._cropZoom = function ( ) {
-        if( this.nivel<this.minLevel ){
-            this.nivel = this.minLevel;
-        }
-        if( this.nivel>this.maxLevel ){
-            this.nivel = this.maxLevel;
-        }
-    };
-    this._setNivel = function ( lvl ) {
-        this.nivel = lvl;
-        this._cropZoom();
-    }
-    this._zoomOpenLayer = function ( mapa ){
-        if( typeof(mapa) != "undefined" && 
-        mapa != null){
-
-            mapa.zoomTo(this.nivel0-(this.nivel-1)*this.paso);
-        }
-    };
-    this.zoomMarca = function ( pNivel ){
-        for( i=this.minLevel ; i<pNivel ; i++ ){
-            $("#"+this.prefZoomId+i).removeClass("activo");
-        }
-        for( i=pNivel ; i<=this.maxLevel ; i++ ){
-            $("#"+this.prefZoomId+i).addClass("activo");
-        }
-    }
-    this.zoomEn = function (pNivel,mapa){
-        this.nivel = pNivel;
-        for( i=this.minLevel ; i<=this.maxLevel ; i++ ){
-            $("#"+this.prefZoomId+i).attr("data-select","0");
-        }
-        $("#"+this.prefZoomId+pNivel).attr("data-select","1");
-        this._setNivel(pNivel);
-        this._zoomOpenLayer(mapa);
-
-        this.zoomMarca(pNivel);
-
-        return pNivel;
-    };
-    this.zoomIn = function( mapa ){
-        this._setNivel(--this.nivel);
-        this.zoomEn(this.nivel,mapa);
-        return this.nivel;
-    };
-    this.zoomOut = function( mapa ){
-        this._setNivel(++this.nivel);
-        this.zoomEn(this.nivel,mapa);
-        return this.nivel;
-    };
-    this.zoomIndex = function(){
-        last = this.nivel;
-
-        for( i=this.maxLevel ; i>this.minLevel ; i-- ){
-            if($("#"+this.prefZoomId+i).attr("data-select")=="1"){
-                last = i;
-                break;
-            }
-        }
-        return last;
-    };
-    this.zoomClean = function ( ) {
-        for( i=this.minLevel ; i<this.nivel ; i++ ){
-            $("#"+this.prefZoomId+i).removeClass("activo");
-        }
-        for( i=this.nivel ; i<=this.maxLevel ; i++ ){
-            $("#"+this.prefZoomId+i).addClass("activo");
-        }
-    };
-
-    this.init = function (){
-        this._setNivel(this.zoomIndex());
-        this.zoomEn(this.nivel);
-    }
-    this.setLimits = function (maximo,minimo){
-        this.paso = Math.ceil((maximo-minimo+1)/this.maxLevel);
-
-        this.nivel0 = minimo+(this.maxLevel-1)*this.paso;
-
-        this.init();
-    }
-    this.init();
-}
