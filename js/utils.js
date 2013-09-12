@@ -474,35 +474,34 @@ PXE = (function (PXE) {
       *
       * @invariant : this.shiftKey and this.ctrlKey always true or false
       */
-    function FunKeyDetect (element)
-    {
-	this.element = $(element);
-	this.shiftKey = false;
-	this.ctrlKey = false;
-	
-	that = this;
-	
-	this.element.keydown(function(event) {
-	    switch (event.which) {
-		case 16:
-		    that.shiftKey = true;
-		break;
-		case 17:
-		    that.ctrlKey = true;
-		break;
-	    }
-	});
+    function FunKeyDetect (element) {
+        this.element = $(element);
+        this.shiftKey = false;
+        this.ctrlKey = false;
 
-	this.element.keyup(function(event) {
-	    switch (event.which) {
-		case 16:
-		    that.shiftKey = false;
-		break;
-		case 17:
-		    that.ctrlKey = false;
-		break;
-	    }
-	});
+        that = this;
+
+        this.element.keydown(function(event) {
+            switch (event.which) {
+                case 16:
+                    that.shiftKey = true;
+                    break;
+                case 17:
+                    that.ctrlKey = true;
+                    break;
+            }
+        });
+
+        this.element.keyup(function(event) {
+            switch (event.which) {
+                case 16:
+                    that.shiftKey = false;
+                    break;
+                case 17:
+                    that.ctrlKey = false;
+                    break;
+            }
+        });
     }
     
     PXE.ui = {};

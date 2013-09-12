@@ -70,18 +70,27 @@ st["ui"] = {
             if (init) {
                 PXE.Layers.run(dt);
                 // controles
-                if(jaws.pressed("left_mouse_button")){
-                   if (PXE.ui.fun.ctrlKey) {
-                      angMsg.send("backOffset.x",jaws.mouse_x);
-                      angMsg.send("backOffset.y",jaws.mouse_y);
-                      this.ctx.attr("class", "canvas-moving");
-                   } else {
-                       angMsg.send("dragCut",{
-                           "x": jaws.mouse_x, 
-                           "y": jaws.mouse_y
-                       });
-                       this.ctx.attr("class", "canvas-dragging");
-                   }
+                if(PXE.ui.fun.ctrlKey){
+                    if (jaws.pressed("left")) {
+                        angMsg.send("cut.size", {"x": -1, "y": 0});
+                    } else if (jaws.pressed("right")) {
+                        angMsg.send("cut.size", {"x": 1, "y": 0});
+                    } else if (jaws.pressed("up")) {
+                        angMsg.send("cut.size", {"x": 0, "y": -1});
+                    } else if (jaws.pressed("down")) {
+                        angMsg.send("cut.size", {"x": 0, "y": 1});
+                    } 
+                //} else if(PXE.ui.fun.shiftKey) {
+                } else if (jaws.pressed("left_mouse_button")) { 
+                    angMsg.send("dragCut",{
+                        "x": jaws.mouse_x, 
+                        "y": jaws.mouse_y
+                    });
+                    this.ctx.attr("class", "canvas-dragging");
+                } else if (jaws.pressed("right_mouse_button")) { 
+                    angMsg.send("backOffset.x",jaws.mouse_x);
+                    angMsg.send("backOffset.y",jaws.mouse_y);
+                    this.ctx.attr("class", "canvas-moving");
                 } else if (jaws.pressed("left")) {
                     angMsg.send("cut.offset", {"x": -1, "y": 0});
                 } else if (jaws.pressed("right")) {

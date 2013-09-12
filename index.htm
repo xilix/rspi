@@ -10,11 +10,12 @@
         <meta http-equiv="Content-Style-Type" content="text/css" />
         <meta name="author" content="albert rosell anglisano <albert.rosell@gmail.com" />
         <link rel="stylesheet" href="vendors/bootstrap-3.0.0-wip/dist/css/bootstrap.css"></style>
+        <link rel="stylesheet" href="css/rspi.css"></style>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <script type="text/javascript" src="vendors/jquery/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="vendors/bootstrap-3.0.0-wip/dist/js/bootstrap.js"></script>
         <script type="text/javascript" src="vendors/angular/angular.min.js"></script>
-        <script type="text/javascript" src="js/devel.js"></script>
+        <!--<script type="text/javascript" src="js/devel.js"></script>-->
         <script type="text/javascript" src="js/jaws.js"></script>
         <script type="text/javascript" src="js/pxe-0.2.js"></script>
         <script type="text/javascript" src="js/pxe-states-0.2.js"></script>
@@ -109,7 +110,7 @@
     <body data-ng-controller="uiControl">
         <nav class="navbar navbar-default navbar-fixed-top general-pars-navbar" role="navigation">
             <div class="navbar-header">
-                <a class="navbar-brand" href="#">PXE-RSPI [logo]</a>
+                <a class="navbar-brand" href="#">PXE-RPSI</a>
             </div>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                <form class="navbar-form navbar-left" role="search">
@@ -124,11 +125,11 @@
                     </div>
                     <!--<button type="submit" class="btn btn-default sel-cut">Cut</button>-->
                 </form>
-               <p class="navbar-right">
+               <!--<p class="navbar-right">
                     <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/deed.es_CO">
                         <img alt="Licencia Creative Commons" class="license" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" />
                     </a>
-                </p>
+                    </p>-->
                 <ul class="nav nav-tabs navbar-right view-tabs">
                     <li class="active">
                         <a href="#" class="sel-tab" rel="tabHome">Home</a>
@@ -206,9 +207,9 @@
            </div>
                
        </nav>
-        <div class="container general-content" id="tabHome">
-            <h1>Pixel eater RSPI</h1>
-            <h2>[TODO:  logo bonito para ponerlo aquí ]</h2>
+        <div class="container general-content" id="tabHome" style="overflow: scroll; height: 400px;">
+            <h1>Pixel eater RPSI</h1>
+            <img src="img/RPSI-logo.png" alt="logo RSPI" />
             <p>
                 Alguna cosa muy interesante y profunda se podrá escribir aquí 
             </p>
@@ -222,10 +223,14 @@
         </div>
         <div class="container general-content" id="tabData" style="display: none;">
             <h3>Datos del recorte</h3>
-            <!--<form class="form-control">-->
-                <textarea class="col-md-12 well well-lg alert {{isDataOk()}}" data-ng-model="cut.data">
-                </textarea>
-            <!--</form>-->
+            <textarea class="col-md-12 well well-lg alert {{isDataOk()}}" data-ng-model="cut.data">
+            </textarea>
+            <form role="form">
+                <div class="form-group">
+                    <label for="comment">Comment:</label>
+                    <input type="text" class="col-md-12" name="comment" data-ng-model="comment" />
+                </div>
+            </form>
         </div>
         <script language="JavaScript">
             function swapTab (tab) {
@@ -248,11 +253,16 @@
                 });
 
                 $(".sel-cut").click(function (e) {
-                    console.log("jjj");
                     e.preventDefault();
                     swapTab($("#selCut")); 
                 });
             });
+            // TODO: Refactor this part
+            window.addEventListener("keydown", function (e) {
+                if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+                    e.preventDefault();
+                }
+            }, false);
         </script>
         <script type="text/javascript" src="js/st_ui.js"></script>
    </body>

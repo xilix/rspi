@@ -4,6 +4,7 @@ function uiControl($scope,$compile) {
     $scope.imgLoaded = null;
     $scope.pantalla = 0;
     $scope.backOffset = {};
+    $scope.comment= '';
     $scope.nom = '';
     $scope.backOffset.mouse = {"x":0,"y":0};
     $scope.backOffset.back = {"x":0,"y":0};
@@ -75,15 +76,22 @@ function uiControl($scope,$compile) {
         );
         str += '},"t":' + isNumberIfNotDef($scope.cut.time, defCut.time);
         str += '}},';
+
+        if ($scope.comment !== "") {
+            str += "// "+$scope.comment;
+        }
         $scope.cut.data = str;
     }
 
     function getData (val) {
         try{
-            var d = val.slice(0, val.length - 1);
+            var d = val;
+            d = d.replace(new RegExp("\/*$",""), "");
+            d = d.slice(0, val.length - 1);
             d = JSON.parse(d);
         } catch (e) {
 
+            console.log("WARNING: data format no valid");
             safeApply(function(){
                 error["data"] = true;
             });
@@ -93,7 +101,11 @@ function uiControl($scope,$compile) {
         safeApply(function(){
             error["data"] = false;
         });
-
+/*console.log("a");
+var reg = new RegExp("^[*]*\/\/$","");
+console.log("aa");
+        $scope.comment = val.replace(new RegExp("^*\/\/", ""), "");
+console.log("b");*/
         $scope.nom = d.n;
         $scope.cut.width = isNumberIfNotDef(d.d.w, $scope.cut.width);
         $scope.cut.height = isNumberIfNotDef(d.d.h, $scope.cut.height);
@@ -123,6 +135,9 @@ function uiControl($scope,$compile) {
 
     $scope.$watch('nom', function (val) {
         changeData(); 
+    });
+    $scope.$watch('comment', function (val) {
+        changeData();
     });
 
     $scope.$watch('pantalla', function (val) {
@@ -248,6 +263,17 @@ function uiControl($scope,$compile) {
                 - isNumberIfNotDef($scope.cut[typ], defCut[typ])
             ) / $scope.zoom) - $scope.backOffset.back[backOff];
     }
+
+    $scope.setSize = function (pos) {
+        safeApply(function () {
+            $scope.cut.width = isNumberIfNotDef(
+                $scope.cut.width, defCut.width
+            ) + pos.x;
+            $scope.cut.height = isNumberIfNotDef(
+                $scope.cut.height, defCut.height
+            ) + pos.y;
+        });
+    };
 
     $scope.setOffset = function (pos) {
         safeApply(function () {
@@ -535,6 +561,9 @@ function AngMsg(DOMcontroller) {
             break;
             case "pantalla":
                 this.scope.setPantalla(msg);
+            break;
+            case "cut.size":
+                this.scope.setSize(msg);
             break;
             case "cut.offset":
                 this.scope.setOffset(msg);
