@@ -1,6 +1,6 @@
 /**
  *
- * Yibert Technologies
+ * by Albert Rosell Anglisano <albert.rosell@gmail.com> 
  * Pixel eater studio
  *
  * License: LGPL - http://www.gnu.org/licenses/lgpl.html
@@ -11,6 +11,7 @@ if (typeof (PXE) === undefined) { throw "PXE core not loaded"; }
 PXE = (function (PXE) {
     //"use strict";
 
+    // state pattern
     PXE.stateMachine = function (states) {
         var state = "";
         
@@ -65,6 +66,7 @@ PXE = (function (PXE) {
         }
     };
     
+    // Updating factory
     var PXE_newElem_states_bck = PXE.newElem;
 
     PXE.newElem = function (objSprite) {

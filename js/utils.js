@@ -1,6 +1,6 @@
 /**
  *
- * Yibert Technologies
+ * Albert Rosell Anglisano <albert.rosell@gmail.com> 
  * Pixel eater studio
  *
  * License: LGPL - http://www.gnu.org/licenses/lgpl.html

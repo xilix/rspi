@@ -9,7 +9,7 @@
 if (PXE === undefined) {
     
     var PXE = (function (PXE) {
-        "use strict";
+        //"use strict";
     
         /** Parametre per defecte */
         PXE.def = function (opt, def) {
