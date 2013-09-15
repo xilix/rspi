@@ -11,3 +11,83 @@ body {
 html {
     overflow: hidden !important;
 }
+.authors a, .authors h5 {
+    font-style: italic !important;
+    font-size: 10pt !important;
+}
+#cutCanvas{
+    opacity:_0;
+}
+body {
+    margin: 0px;
+    padding: 0px;
+}
+.general-content {
+    margin-top: 50px;
+}
+.license {
+    margin-top: 10px;
+}
+.view-tabs {
+    margin-top: 8px;
+}
+.cut-pars-navbar {
+    border-top: 1px rgb(230, 230, 230) solid;
+    background-color: rgb(248, 248, 248);
+}
+.cut-pars-navbar .navbar-collapse {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.cut-pars-navbar .navbar-collapse form {
+    padding-left: 5px;
+    padding-right: 0px;
+}
+.cut-pars-navbar .navbar-collapse form .form-group{
+    padding-left: 5px;
+    padding-right: 0px;
+}
+.cut-pars-navbar .navbar-collapse form .form-group{
+    font-size: 10px;
+}
+.cut-pars-navbar .navbar-collapse form .form-group div{
+    padding-left: 5px;
+    padding-right: 0px;
+}
+.general-pars-navbar div.navbar-collapse p.navbar-right {
+    padding-left: 25px;
+}
+textarea {
+    resize: none;
+}
+.canvas-normal {
+    cursor: default !important;
+}
+.canvas-dragging {
+    cursor: pointer !important;
+}
+.canvas-moving {
+    cursor: move !important;
+}
+.zoom-box{
+    text-align: center;
+    width: 40px;
+    min-width: 40px;
+}
+.zoom-item{
+    width: 30px;
+    height: 30px;
+    background-color: #FFF;
+    padding: 10px;
+}
+.zoom-item a{
+    -moz-box-shadow: inset -5px -5px 5px #62ABDA;
+    -webkit-box-shadow: inset -5px -5px 5px #62ABDA;
+    box-shadow: inset -5px -5px 5px #62ABDA;
+    background-color: #428bca;
+    border-radius: 30px;
+    display: block;
+    color: #444;
+    padding: 0px;
+}
+

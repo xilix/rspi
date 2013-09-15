@@ -1,8 +1,16 @@
 /*
+For analisis in a DDBB
+
 SELECT  `function` ,`iteracio`, SUM( TIME ) , COUNT( * ) , 1000 * SUM( TIME ) / COUNT( * ) 
 FROM  `simple` 
 GROUP BY  `function` , `iteracio`
 ORDER BY `function`
+
+TODO: To automatize this proces
+
+To set/unset the profiler mode use sed with "s@/_*JSP*_/@//JSP//@g"
+or "s@//JSP//@/_*JSP*:/@g" but witouth the _. You understand me ....
+i hope ....
 */
 
 function JSProfiler () {
@@ -11,6 +19,16 @@ function JSProfiler () {
     this.scale = 1000.0;
 }
 
+/**
+ * Why another profiler ??!! well... because the profiler
+ * from the browser is stupid and it doesn't work propper
+ * sometimes or is not as useful.
+ * In this way is more easy to profile 
+ * a known part which is critical. So why? because is 
+ * more precise on profiling a specific part of the code.
+ * Also because is easier to unit testing the perfromance in 
+ * this way
+ */
 JSProfiler.prototype.microtime = function (get_as_float) {
   // http://kevin.vanzonneveld.net
   // +   original by: Paulo Freitas

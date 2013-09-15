@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html data-ng-app="rspi">
-    <!--
-    By Albert Rosell Anglisano <albert.rosell@gmail.com>
-    Creative Commons CC BY-NC-SA 3.0
-    -->
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="chrome=1, IE=edge" />
         <meta http-equiv="Content-Style-Type" content="text/css" />
-        <meta name="author" content="albert rosell anglisano <albert.rosell@gmail.com" />
         <link rel="stylesheet" href="vendors/bootstrap-3.0.0-wip/dist/css/bootstrap.css"></style>
         <link rel="stylesheet" href="css/rspi.css"></style>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,86 +21,6 @@
             <script src="vendors/bootstrap-3.0.0-wip/assets/js/html5shiv.js"></script>
             <script src="vendors/bootstrap-3.0.0-wip/assets/js/respond.min.js"></script>
         <![endif]-->
-        <style>
-        /*#draw:hover { 
-            cursor: url(cursor.png);
-        }
-        #draw:active { 
-            cursor: url(cursorActive.png);
-        }*/
-        body {
-            margin: 0px;
-            padding: 0px;
-        }
-        .general-content {
-            margin-top: 50px;
-        }
-        .license {
-            margin-top: 10px;
-        }
-        .view-tabs {
-            margin-top: 8px;
-        }
-        .cut-pars-navbar {
-            border-top: 1px rgb(230, 230, 230) solid;
-            background-color: rgb(248, 248, 248);
-        }
-        .cut-pars-navbar .navbar-collapse {
-            padding-left: 5px;
-            padding-right: 5px;
-        }
-        .cut-pars-navbar .navbar-collapse form {
-            padding-left: 5px;
-            padding-right: 0px;
-        }
-        .cut-pars-navbar .navbar-collapse form .form-group{
-            padding-left: 5px;
-            padding-right: 0px;
-        }
-        .cut-pars-navbar .navbar-collapse form .form-group{
-            font-size: 10px;
-        }
-        .cut-pars-navbar .navbar-collapse form .form-group div{
-            padding-left: 5px;
-            padding-right: 0px;
-        }
-        .general-pars-navbar div.navbar-collapse p.navbar-right {
-            padding-left: 25px;
-        }
-        textarea {
-            resize: none;
-        }
-        .canvas-normal {
-            cursor: default !important;
-        }
-        .canvas-dragging {
-            cursor: pointer !important;
-        }
-        .canvas-moving {
-            cursor: move !important;
-        }
-        .zoom-box{
-            text-align: center;
-            width: 40px;
-            min-width: 40px;
-        }
-        .zoom-item{
-            width: 30px;
-            height: 30px;
-            background-color: #FFF;
-            padding: 10px;
-        }
-        .zoom-item a{
-            -moz-box-shadow: inset -5px -5px 5px #62ABDA;
-            -webkit-box-shadow: inset -5px -5px 5px #62ABDA;
-            box-shadow: inset -5px -5px 5px #62ABDA;
-            background-color: #428bca;
-            border-radius: 30px;
-            display: block;
-            color: #444;
-            padding: 0px;
-        }
-        </style>
     </head>
     <body data-ng-controller="uiControl">
         <nav class="navbar navbar-default navbar-fixed-top general-pars-navbar" role="navigation">
@@ -138,20 +53,19 @@
                         <a href="#" class="sel-tab" rel="tabSprite" data-pantalla="0">Sprite sheet</a>
                     </li>
                     <li><a href="#" class="sel-tab" rel="tabSprite" data-pantalla="1" id="selCut">Cut</a></li>
-                    <li><a href="#" class="sel-tab" rel="tabData">Data</a></li>
+                    <li><a href="#" class="sel-tab" rel="tabData" id="selData">Data</a></li>
                 </ul> 
 
                 <ul class="nav nav-tabs navbar-left">
                     <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Zoom <span class="glyphicon glyphicon-search"></span></a>
-                    <ul class="dropdown-menu"><!-- class="zoom-box" -->
-                            <!--<li><a href="#" class="zoom-item">x1</a></li>
-                            <li><a href="#" class="zoom-item">x2</a></li>
-                            <li><a href="#" class="zoom-item">x3</a></li>-->
-                            <li style="padding:0px;text-align:center;">
-                                <label><input type="radio" value="1" name="zoom" data-ng-model="zoom" />x1</label>
-                                <label><input type="radio" value="2" name="zoom" data-ng-model="zoom" />x2</label>
-                                <label><input type="radio" value="4" name="zoom" data-ng-model="zoom" />x4</label>
+                        <ul class="dropdown-menu">
+                            <li style="padding:0px;text-align:center;font-size:8pt">
+                            <label><input type="radio" value="1" name="zoom" data-ng-model="zoom" />x1</label>
+                            <label><input type="radio" value="2" name="zoom" data-ng-model="zoom" />x2</label>
+                            <label><input type="radio" value="4" name="zoom" data-ng-model="zoom" />x4</label>
+                            <label><input type="radio" value="8" name="zoom" data-ng-model="zoom" />x8</label>
+                            <label><input type="radio" value="16" name="zoom" data-ng-model="zoom" />x16</label>
                             </li>
                         </ul>
                     </li>
@@ -164,57 +78,122 @@
                     <div class="form-group col-md-2">
                         <label class="col-md-1 control-label">W:</label>
                         <div class="col-md-8">
-                        <input type="number" class="form-control input-sm" placeholder="Width" data-ng-model="cut.width"/>
+                        <input type="number" id="cutWidth" class="form-control input-sm" placeholder="Width" data-ng-model="cut.width"/>
                         </div>
                     </div>
                     <div class="form-group col-md-2">
                         <label class="col-md-1 control-label">H:</label>
                         <div class="col-md-8">
-                        <input type="number" class="form-control input-sm" placeholder="Hieght" data-ng-model="cut.height"/>
+                        <input type="number" id="cutHeight" class="form-control input-sm" placeholder="Hieght" data-ng-model="cut.height"/>
                         </div>
                     </div>
                     <div class="form-group col-md-2">
                         <label class="col-md-2 control-label">Off:</label>
                         <div class="col-md-5">
-                        <input type="number" class="form-control input-sm" placeholder="X" data-ng-model="cut.offset.x">
+                        <input type="number" id="cutOffsetX" class="form-control input-sm" placeholder="X" data-ng-model="cut.offset.x">
                         </div>
                         <div class="col-md-4">
-                        <input type="number" class="form-control input-sm" placeholder="Y" data-ng-model="cut.offset.y">
+                        <input type="number" id="cutOffsetY" class="form-control input-sm" placeholder="Y" data-ng-model="cut.offset.y">
                         </div>
                     </div>
                     <div class="form-group col-md-2">
                         <label class="col-md-2 control-label">Fr:</label>
                         <div class="col-md-5">
-                        <input type="number" class="form-control input-sm" placeholder="Begin" data-ng-model="cut.frames.begin">
+                        <input type="number" id="cutFramesBegin" class="form-control input-sm" placeholder="Begin" data-ng-model="cut.frames.begin">
                         </div>
                         <div class="col-md-4">
-                        <input type="number" class="form-control input-sm" placeholder="Nº Fr" data-ng-model="cut.frames.end">
+                        <input type="number" id="cutFramesEnd" class="form-control input-sm" placeholder="Nº Fr" data-ng-model="cut.frames.end">
                         </div>
                     </div>
                     <div class="form-group col-md-2">
                         <label class="col-md-1 control-label">T:</label>
                         <div class="col-md-6">
-                        <input type="number" class="form-control input-sm" placeholder="Time (ms)" data-ng-model="cut.time">
+                        <input type="number" id="cutTime" class="form-control input-sm" placeholder="Time (ms)" data-ng-model="cut.time">
                         </div>
                     </div>
                     <div class="checkbox">
                         <label style="font-size:10px">
-                           &nbsp;<input type="checkbox" data-ng-model="cut.orient"> Down 
+                           &nbsp;<input type="checkbox" id="cutOrient" data-ng-model="cut.orient"> Down 
                         </label>
                     </div>
-                    <button type="submit" class="btn btn-default navbar-right sel-cut">Cut</button>
+                    <button type="button" id="cutMe" class="btn btn-default navbar-right">Cut</button>
                 </form>
            </div>
                
        </nav>
-        <div class="container general-content" id="tabHome" style="overflow: scroll; height: 400px;">
+        <div class="container general-content" id="tabHome" style="overflow:auto;height: 480px">
             <h1>Pixel eater RPSI</h1>
+            <!--<div id="jaws-log"></div>-->
             <img src="img/RPSI-logo.png" alt="logo RSPI" />
             <p>
-                Alguna cosa muy interesante y profunda se podrá escribir aquí 
+                This is a tool to aid on the job of set the coordinates to cut sprites for videogames make and other pssible 
+                purpose that you may think. Some people told that also is good for when somebody need to go to the toilette
+                but we haven't experience this fact so we cannot asure it.
             </p>
             <p>
-                También un tutorial que enseñe como utilizar esto
+                <ul>
+                    <li><b>Newbie user:</b> So tell me dude. How i use this?</li>
+                    <li><b>PXE dude:</b>
+                        Okey. First there is 2 nav bars. One in the top of the page and another in the bottom.
+                        The top one gots the general parameters related to the sprite sheet and the application.
+                        In that bar you will set things lick where is the image of the spritesheet, the zoom and so.
+                        The bottom one gots the parameters related to the cut from the spritesheet. Here you will
+                        set the coordinates of the sprite sheet cut. Do you see this tab's that says "Home", 
+                        "Sprite sheet", "Cut" and "Data"?
+                    </li>
+                    <li><b>Newbie user:</b>Of course! I'm not blind man</li>
+                    <li><b>PXE dude:</b>This are the different steps that you will need. The Home tab shows this. You know... we need something to start
+                                    some homepage or whatever. I think that you understand it</li>
+                    <li><b>Newbie User:</b>Yep</li>
+                    <li><b>PXE dude:</b>The Sprite sheet tab shows the sprite sheet image to cut. Here you will see a red square that shows
+                                    where is the sprite will be cut. You can move the position of the red box by using the cursor keys 
+                                    in the keyboard, by setting the values of offset in the bottom nav bar or ... by just left clicking
+                                    on the position in the sprite sheet</li>
+                    <li><b>Newbie User:</b>I like the left clicking option. Is much more easy.</li>
+                    <li><b>PXE dude:</b>Yes. and if you need to be more precise you can also set de values in the text fields or just move the cursors.
+                                    Also if you want to change the size of the red box and so the size you can hold ctrl and move the cursor keys or
+                                    manually set the values in the bottom navbar labeled by "w" for width and "h" for height. Then if you change
+                                    to the "Cut" tab you will be able to see the cut of the sprite sheet</li>
+                    <li><b>Newbie User:</b>Cool but i need to make animations not just cut the spirtesheet</li>
+                    <li><b>PXE dude:</b>Okey. no problem. Go back to the Sprite Sheet tab and pay attenton in the bottom navbar. There
+                                    are 2 fields labeled by "fr" for frames. Try to set the last one to a number higher than 1.</li>
+                    <li><b>Newbie User:</b>What are those green boxes?</li>
+                    <li><b>PXE dude:</b>This shows the different animation frames. The fields that you have just set shows the end frame.
+                                    the first one shows the first frame. Once you have set he desired frames you can go back to the "Cut" tab
+                                    and see what happens.</li>
+                    <li><b>Newbie User:</b>Nice, is animated. But is too fast man.</li>
+                    <li><b>PXE dude:</b>You can set the speed of the animation in the bottom menu in the field labeled with "t" fro time.
+                                    Also note that you don't need to go back to the spritesheet tab to change the cut parameters through
+                                    the navbars. Actually you can do it in any part.</li>
+                    <li><b>Newbie User:</b>Interesting... but there are other thing. Now i'm cutting the sprites of the anmation from left to right
+                                    but whats about if i want to cut it vertically ?</li>
+                    <li><b>PXE dude:</b>Just check the "down" checkbox in the bottom navbar</li>
+                    <li><b>Newbie User:</b>Yeah. But now i've found that the spritesheet is too big. The screen have no room for this sheet</li>
+                    <li><b>PXE dude:</b>Okey okey... don't be nervous. You can just right click and drag in the sprite sheet to move it around.
+                                    Also if you don't want to use the mouse you can also move the backgrund by the awsd keys that are common used
+                                    in the shooter games.</li>
+                    <li><b>Newbie User:</b>To be continued...</li>
+                    <li><b>PXE dude:</b>Be fast dude! this is not easy to use! i need some inisght</li>
+                    <li><b>Newbie User:</b></li>
+                    <li><b>PXE dude:</b></li>
+            </p>
+            <p>
+            This work is distributed under <a href="http://www.gnu.org/licenses/lgpl-3.0.en.html" target="_blank">LGPL 3.0. License</a>
+            </p>
+            <p class="authors">
+                    <b> About the authors: </b><br />
+                    We are just a group of crazy mad people computer lovers who gathers in something called Pixel Eater Studio.
+                    Right now we are this dudes:<br />
+                    <a href="https://github.com/xilix" target"_blank" rel="authors">xilix</a><br />
+                    <a href="http://www.pixelsmil.com" target="_blank" rel="authors">toni</a>
+            </p>
+            <p>
+                <b> Acknowledges: </b><br />
+                 It have been used in this work:<br />
+                 <a href="http://jawsjs.com" target="_blank">jaws.js</a><br />
+                 <a href="http://angularjs.org/" target="_blank">angular.js</a><br />
+                 <a href="http://getbootstrap.com" target="_blank">bootstrap</a><br />
+                 <a href="http://jquery.com" target="_blank">jQuery</a>
             </p>
         </div>
 
@@ -231,16 +210,28 @@
                     <input type="text" class="col-md-12" name="comment" data-ng-model="comment" />
                 </div>
             </form>
+            <canvas id="cutCanvas" width="0" height="0"></canvas>
         </div>
         <script language="JavaScript">
-            function swapTab (tab) {
+            function swapTab(tab) {
                 $(".general-content").hide();
                 $("#"+tab.attr("rel")).fadeIn("slow");
                 tab.closest("ul").children("li").removeClass("active");
                 tab.closest("li").addClass("active");
 
-                if (tab.attr("data-pantalla") === "0") { angMsg.send("pantalla", 0); }
-                if (tab.attr("data-pantalla") === "1") { angMsg.send("pantalla", 1); }
+                jaws.stopPreventDefaultKeys(["up"]);
+                jaws.stopPreventDefaultKeys(["down"]);
+                if (tab.attr("data-pantalla") === "0") { 
+                    angMsg.send("pantalla", 0); 
+                    jaws.preventDefaultKeys(["up"]);
+                    jaws.preventDefaultKeys(["down"]);
+                }
+                if (tab.attr("data-pantalla") === "1") { 
+                    angMsg.send("pantalla", 1); 
+                    jaws.preventDefaultKeys(["up"]);
+                    jaws.preventDefaultKeys(["down"]);
+                }
+
             }
 
             $(document).ready(function () {
@@ -251,18 +242,23 @@
                     e.preventDefault();
                     swapTab($(this)); 
                 });
-
-                $(".sel-cut").click(function (e) {
-                    e.preventDefault();
-                    swapTab($("#selCut")); 
-                });
             });
             // TODO: Refactor this part
             window.addEventListener("keydown", function (e) {
-                if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-                    e.preventDefault();
+                if(37 != e.keyCode) {
+                    if(jaws.isPreventDefaultKey(["left"])) { e.preventDefault(); }
+                } else if(38 != e.keyCode) {
+                    if(jaws.isPreventDefaultKey(["up"])) { e.preventDefault(); }
+                } else if(39 != e.keyCode) {
+                    if(jaws.isPreventDefaultKey(["down"])) { e.preventDefault(); }
+                } else if(40 != e.keyCode) {
+                    if(jaws.isPreventDefaultKey(["right"])) { e.preventDefault(); }
                 }
             }, false);
+
+            $("#cutMe").click(function () {
+                angMsg.send("cut", 1); 
+           });
         </script>
         <script type="text/javascript" src="js/st_ui.js"></script>
    </body>

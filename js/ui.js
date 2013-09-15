@@ -1,4 +1,25 @@
 function uiControl($scope,$compile) {
+    var defCut = {
+            "width" : 32,
+            "height" : 32,
+            "offset" : {
+                "x" : 0,
+                "y" : 0
+            },
+            "frames" : {
+                "begin" : 0,
+                "end" : 1 
+            },
+            "time" : 100,
+            "orient" : false,
+            "data" : ""
+        }, defCutCompress = cutCompress(defCut),
+        cut = null, grid = null, back = null,
+        anim = null, error = [];
+
+
+   
+
     $scope.spriteSheetUrl = 'img/Sprites.png';
     $scope.macroPixel = '';
     $scope.imgLoaded = null;
@@ -25,27 +46,25 @@ function uiControl($scope,$compile) {
         "data" : ""
     };
 
-    var defCut = {
-        "width" : 32,
-        "height" : 32,
-        "offset" : {
-            "x" : 0,
-            "y" : 0
-        },
-        "frames" : {
-            "begin" : 0,
-            "end" : 1 
-        },
-        "time" : 100,
-        "orient" : false,
-        "data" : ""
-    };
-
-    var cut = null;
-    var grid = null;
-    var back = null;
-    var anim = null;
-    var error = [];
+    function cutCompress(cut, name){
+        return {
+            "n": (typeof name !== "undefined" ? name : ""),
+            "d": {
+                "w": cut.width,
+                "h": cut.height,
+                "o":{
+                    "x": cut.offset.x,
+                    "y": cut.offset.y
+                },
+                "or": (cut.orient ? "right" : "down"),
+                "f":{
+                    "b": cut.frames.begin,
+                    "e": cut.frames.end
+                },
+                "t": cut.time
+            }
+        };
+    }
 
     function resetBackOffset () {
         $scope.backOffset.mouse = {"x":0,"y":0};
@@ -78,34 +97,33 @@ function uiControl($scope,$compile) {
         str += '}},';
 
         if ($scope.comment !== "") {
-            str += "// "+$scope.comment;
+            str += " // "+$scope.comment;
         }
         $scope.cut.data = str;
     }
 
     function getData (val) {
-        try{
-            var d = val;
-            d = d.replace(new RegExp("\/*$",""), "");
-            d = d.slice(0, val.length - 1);
+        try {
+            var d = val, comment = [];
+            d = d.split(" // ");
+            d = d[0].slice(0, d[0].length - 1);
             d = JSON.parse(d);
         } catch (e) {
-
-            console.log("WARNING: data format no valid");
-            safeApply(function(){
-                error["data"] = true;
-            });
-            return false;
+            if (val === "") {
+                d = cutCompress(defCut, $scope.name);
+            } else {
+                console.log("WARNING: data format not valid");
+                safeApply(function(){
+                    error["data"] = true;
+                });
+                return false;
+            }
         }
 
         safeApply(function(){
             error["data"] = false;
         });
-/*console.log("a");
-var reg = new RegExp("^[*]*\/\/$","");
-console.log("aa");
-        $scope.comment = val.replace(new RegExp("^*\/\/", ""), "");
-console.log("b");*/
+
         $scope.nom = d.n;
         $scope.cut.width = isNumberIfNotDef(d.d.w, $scope.cut.width);
         $scope.cut.height = isNumberIfNotDef(d.d.h, $scope.cut.height);
@@ -119,6 +137,13 @@ console.log("b");*/
             d.d.f.e, $scope.cut.frames.end
         );
         $scope.cut.time = isNumberIfNotDef(d.d.t, $scope.cut.time)
+
+        d = val.split(" // ");
+        if(d.length > 1) {
+            comment = d.slice(1, d.length).join(" // ");
+            if (comment !== $scope.comment) { $scope.comment = comment; }
+        }
+
     }
 
     function swapPantalla (val) {
@@ -145,9 +170,7 @@ console.log("b");*/
     });
 
     $scope.$watch('cut.orient', function (val) {
-        safeApply(function(){
-            reallocateCutOffsets();
-        });
+        reallocateCutOffsets();
         resetCut();
     });
 
@@ -201,8 +224,8 @@ console.log("b");*/
     });
 
     $scope.$watch('spriteSheetUrl', function (ara, abans) {
-       sprtSheet.set(ara);
-       $scope.setImgLoaded(sprtSheet.isLoaded);
+       cnvsUP.sprtSheet.set(ara);
+       $scope.setImgLoaded(cnvsUP.sprtSheet.isLoaded);
     });
 
     $scope.$watch('zoom', function (val) {
@@ -227,7 +250,20 @@ console.log("b");*/
         safeApply(function () {
             $scope.pantalla = value;
         });
+        
     };
+
+    $scope.cutMe = function (value) {
+        var begin = isNumberIfNotDef($scope.cut.frames.begin, defCut.frames.begin),
+            end = isNumberIfNotDef($scope.cut.frames.end, defCut.frames.end);
+
+        cnvsUP.getCut().resizeCut(
+            $scope.spriteSheetUrl,
+            $scope.nom,
+            $scope.cut
+        );
+    };
+
 
     $scope.setBackOffset = function (value) {
         safeApply(function () {
@@ -237,23 +273,27 @@ console.log("b");*/
     };
 
     $scope.setBackOffsetX = function (value) {
-        safeApply(function () {
-            var d = (value -  $scope.backOffset.mouse.x) / $scope.zoom;
-            if (15 < d) { d = 15; };
-            if (d < -15) { d = -15; }
-            $scope.backOffset.back.x += d;
-            $scope.backOffset.mouse.x = value;
-        });
+        if ($scope.pantalla === 0) {
+            safeApply(function () {
+                var d = (value -  $scope.backOffset.mouse.x) / $scope.zoom;
+                if (15 < d) { d = 15; };
+                if (d < -15) { d = -15; }
+                $scope.backOffset.back.x += d;
+                $scope.backOffset.mouse.x = value;
+            });
+        }
     };
 
     $scope.setBackOffsetY = function (value) {
-        safeApply(function () {
-            var d = (value -  $scope.backOffset.mouse.y) / $scope.zoom;
-            if (15 < d) { d = 15; };
-            if (d < -15) { d = -15; }
-            $scope.backOffset.back.y += d; 
-            $scope.backOffset.mouse.y = value;
-        });
+        if ($scope.pantalla === 0) {
+            safeApply(function () {
+                var d = (value -  $scope.backOffset.mouse.y) / $scope.zoom;
+                if (15 < d) { d = 15; };
+                if (d < -15) { d = -15; }
+                $scope.backOffset.back.y += d; 
+                $scope.backOffset.mouse.y = value;
+            });
+        }
     };
 
     function _dragCutPos(val, typ, backOff){
@@ -287,10 +327,12 @@ console.log("b");*/
     };
 
     $scope.dragCut = function (pos) {
-        safeApply(function () {
-            $scope.cut.offset.x = _dragCutPos(pos.x, "width", "x");
-            $scope.cut.offset.y = _dragCutPos(pos.y, "height", "y");
-        });
+        if ($scope.pantalla === 0) {
+            safeApply(function () {
+                $scope.cut.offset.x = _dragCutPos(pos.x, "width", "x");
+                $scope.cut.offset.y = _dragCutPos(pos.y, "height", "y");
+            });
+        }
     }
 
     $scope.isloaded = function () {
@@ -374,6 +416,7 @@ console.log("b");*/
     }
 
     function macroPxRound (val) {
+        var macroP;
         val = parseInt(val);
 
         if (!angular.isNumber($scope.macroPixel)) {
@@ -388,11 +431,23 @@ console.log("b");*/
         ) { 
             return val; 
         }
-        var macroP = $scope.macroPixel;
+        macroP = $scope.macroPixel;
 
         return Math.round(val / macroP) * macroP;
     }
+    function isNumberIfNotDef(numero, def){
+        if (
+            !angular.isNumber(numero) ||
+            isNaN(numero)
+        ) {
+            return def;
+        }
+        return numero
+    }
 
+    // TODO: Put this method in the cnvsUP module. Inside the controller
+    //       shuldn't be anything related to the PXE engine. The cvnsUP
+    //       implements the interface.
     function resetGrid () {
         var step = $scope.macroPixel;
         if (grid !== null) { PXE.Els.get(grid).remove(); }
@@ -417,17 +472,6 @@ console.log("b");*/
             PXE.Els.get(grid).name = "grid";
         }
     }
-
-    function isNumberIfNotDef(numero, def){
-        if (
-            !angular.isNumber(numero) ||
-            isNaN(numero)
-        ) {
-            return def;
-        }
-        return numero
-    }
-
     function resetCut () {
         var i = $scope.cut.frames.begin, iMax = $scope.cut.frames.end, idSubCut,
             z = $scope.zoom, w = $scope.cut.width, h = $scope.cut.height,
@@ -454,8 +498,8 @@ console.log("b");*/
         t = isNumberIfNotDef(t, defCut.time);
 
         if ($scope.imgLoaded) {
-            PXE.Els.get(sprtSheet.id).moveTo(bx * z, by * z);
-            PXE.Els.get(sprtSheet.id).scaleTo(z);
+            PXE.Els.get(cnvsUP.sprtSheet.id).moveTo(bx * z, by * z);
+            PXE.Els.get(cnvsUP.sprtSheet.id).scaleTo(z);
         }
 
         if ($scope.pantalla > 0) {
@@ -561,6 +605,9 @@ function AngMsg(DOMcontroller) {
             break;
             case "pantalla":
                 this.scope.setPantalla(msg);
+            break;
+            case "cut":
+                this.scope.cutMe(1);
             break;
             case "cut.size":
                 this.scope.setSize(msg);

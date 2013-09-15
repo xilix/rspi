@@ -124,7 +124,7 @@ jaws.init = function(options) {
 
   jaws.mouse_x = 0
   jaws.mouse_y = 0
-  window.addEventListener("mousemove", saveMousePosition)
+  jaws.canvas.addEventListener("mousemove", saveMousePosition)
 }
 /**
  * @private
@@ -446,12 +446,11 @@ jaws.setupInput = function() {
   jaws.canvas.addEventListener("mouseup", handleMouseUp, false);
   jaws.canvas.addEventListener("touchstart", handleTouchStart, false);
   jaws.canvas.addEventListener("touchend", handleTouchEnd, false);
-  jaws.canvas.addEventListener("touchend", handleTouchEnd, false);
   jaws.canvas.addEventListener("mouseout", resetPressedKeys, false);
   window.addEventListener("blur", resetPressedKeys, false);
 
   // this turns off the right click context menu which screws up the mouseup event for button 2
-  document.oncontextmenu = function() {return false};
+  jaws.canvas.oncontextmenu = function() {return false};
 }
 
 /** @private
@@ -555,6 +554,21 @@ jaws.preventDefaultKeys = function(array_of_strings) {
     prevent_default_keys[item] = true
   });
 }
+/** 
+ * Prevents default browseraction for given keys.
+ * @example
+ * jaws.preventDefaultKeys( ["down"] )  // Stop down-arrow-key from scrolling page down
+ */
+jaws.stopPreventDefaultKeys = function(array_of_strings) {
+  array_of_strings.forEach( function(item, index) {
+    if(typeof prevent_default_keys[item] !== "undefined") { 
+        prevent_default_keys[item] = undefined;
+    }
+  });
+}
+jaws.isPreventDefaultKey = function(key){
+    return prevent_default_keys[key];
+};
 
 /**
  * Returns true if *key* is currently pressed down

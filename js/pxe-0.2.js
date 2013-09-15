@@ -1,6 +1,6 @@
 /**
  *
- * Yibert Technologies
+ * by Albert Rosell Anglisano <albert.rosell@gmail.com> 
  * Pixel eater studio
  *
  * License: LGPL - http://www.gnu.org/licenses/lgpl.html
@@ -9,7 +9,7 @@
 if (PXE === undefined) {
     
     var PXE = (function (PXE) {
-        //"use strict";
+        "use strict";
     
         /** Parametre per defecte */
         PXE.def = function (opt, def) {
@@ -78,6 +78,11 @@ if (PXE === undefined) {
          * @Classe Iterators Permet la utilització i iteració d'arrays amb
          *                   javascript de manera eficient i rápida sense
          *                   tenir que recorre a forEach o for (ind in arr)
+         *                   Here we use the Iterator pattern not to abstract
+         *                   the content but for performance as in javascript
+         *                   the array random access is much more faster
+         *                   when the index is an integer rather than a string.
+         *                   See PXE.Layers to undertand better why.
          */
          PXE.IteratorCell = function (prev, next, d) {
             if (prev === undefined) { prev = null; }
@@ -164,6 +169,8 @@ if (PXE === undefined) {
         // 
         /**
          * @class Els Gestiona tots els elements actius
+         *        "Librarian" or "keeper" of all the elemtns
+         *        in the game. Who is in charge to provide them
          *
          * @property {int} length número d'elements carregats al motor.
          * @property {array} data array associatiu amb els elemetns carregats al motor i indexats per un id únic.
@@ -191,7 +198,6 @@ if (PXE === undefined) {
             if (El.id !== undefined && PXE.Els.data[El.id] !== undefined) {
                 this.semaforo = false;
                 //console.log("Element " + El.id + " already exists :" + El.toString());
-                return false;
                 throw ("Element " + El.id + " already exists :" + El.toString());
             }
 
@@ -219,12 +225,12 @@ if (PXE === undefined) {
         
         PXE.Els.prototype.remove = function (idEl) {
             //jsp//JSP.start("Els-remove");
-            if (PXE.Els.data[idEl] !== undefined) {
+            if (PXE.Els.exist(idEl)) {
+                PXE.Layers.remove(idEl);
                 PXE.Els.data[idEl].removeConns();
                 PXE.Els.data[idEl] = undefined;
                 PXE.Els.length -= 1;
                 //PXE.Els.data.splice(idEl,1);
-                PXE.Layers.remove(idEl);
                 PXE.Els.dataLliures.push(idEl);
             }
             //jsp//JSP.compute("Els-remove");
@@ -244,14 +250,16 @@ if (PXE === undefined) {
         // 
         /**
          * @class Layers Conte tots els elements ordenats per capa de profunditat per donar l'efecte de una ficiticia tercera dimensió
-         *
+         *        This holds the order of the elements which are displaing. 
+         *        It allows to work easly, and hopefully fast, with layers in the game.
          */
         PXE.Layers = function () {
             this.length = 0;
             this.dataIterator = new PXE.IteratorLvl();
             this.data = this.dataIterator.holder;
-            this.ZId = [];
-            this.IdZ = [];
+            // Relationship from layer to element is 1:N
+            this.ZId = [];// layer - elementS idS map
+            this.IdZ = [];// element id - layer map
         };
         
         PXE.Layers.prototype.add = function (z, El, tip) {
@@ -298,6 +306,7 @@ if (PXE === undefined) {
         
         PXE.Layers.prototype.draw = function (El) {
             var lvl, tip, elem;
+            // Be carefull. This is an important part for perfromance
             //jsp//JSP.start("Layers-draw");
         
             //this.data.forEach(function (arrLvl, lvl) {
@@ -308,6 +317,13 @@ if (PXE === undefined) {
                             arrLvl[tip][elem].draw();
                         }
                 }*/
+                // What the heck is this ??? There are 2 indexes here to be able
+                // to use different ways to display. The index d[0] is for the jaws
+                // elements. The index d[1] is for the custom elements. Is writed
+                // in this way instead of inside a fancy a happy of bunch of whatever
+                // to make it more modular, scalable and bla bla bla just because
+                // the performance. See the comment above about "Be carefull. 
+                // This is an important ...."
                 for (elem = this.data[lvl].d[0].length - 1; elem >= 0; elem -= 1) {
                     this.data[lvl].d[0][elem].draw();
                 }
@@ -321,7 +337,7 @@ if (PXE === undefined) {
         
         PXE.Layers.prototype.remove = function (idEl) {
             var z = this.IdZ[idEl];
-            if (z === undefined) {
+            if (typeof z === "undefined") {
                 return false;
             }
         
@@ -350,6 +366,46 @@ if (PXE === undefined) {
             return true;
         };
         
+        /**
+         * For debugging purpose. It returns the state of the Layers
+         */
+        PXE.Layers.prototype.spy = function (idEl) {
+            var spy = {
+                "is": false, "IdZ": false, 
+                "ZId" : {"is": false},
+                "IdZ" : {"is": false, "ind": 0},
+                "data" : {"is": false, "ind": []}
+            };
+
+            var z = this.IdZ[idEl];
+            if (typeof z !== "undefined") { spy.ZId.is = true; }
+
+            if (typeof this.ZId[z] !== "undefined") { 
+                spy.IdZ.is = true;
+                spy.IdZ.ind = z;
+            }
+
+            var lvl = this.dataIterator.first;
+            for (; this.data[lvl].next !== null; lvl = this.data[lvl].next) {
+                for (elem = this.data[lvl].d[0].length - 1; elem >= 0; elem -= 1) {
+                    if(this.data[lvl].d[0][elem].id === idEl) {
+                        spy.data.is = true;
+                        spy.data.ind.push({"lvl": lvl, "ind": elem, "typ": 0});
+                    }
+                }
+                for (elem = this.data[lvl].d[1].length - 1; elem >= 0; elem -= 1) {
+                    if(this.data[lvl].d[1][elem].id === idEl) {
+                        spy.data.is = true;
+                        spy.data.ind.push({"lvl": lvl, "ind": elem, "typ": 0});
+                    }
+                }
+            }
+
+            spy.is = spy.ZId.is & spy.IdZ.is & spy.data.is;
+
+            return spy;
+        };
+
         PXE.Layers = new PXE.Layers();
 
         // *************************************** //
@@ -358,8 +414,8 @@ if (PXE === undefined) {
             // Parameters for the attachment to the parent
             this.pars = {
                 // Delte If the parent  is deleted this one also
-                // Drop If the parent is deleted this one will remind
-                // Fade If the parent is deleted this will be deleted after some time
+                // TODO: Drop If the parent is deleted this one will remind
+                // TODO: Fade If the parent is deleted this will be deleted after some time
                 ConDel: PXE.Capsule.ConDel.Delete,
                 pos: {
                     x: 0,
