@@ -16,6 +16,7 @@
         <script type="text/javascript" src="js/pxe-states-0.2.js"></script>
         <script type="text/javascript" src="js/utils.js"></script>
         <script type="text/javascript" src="js/ui.js"></script>
+        <script type="text/javascript" src="js/st_ui.js"></script>
         <title>Test Joc</title>
         <!--[if lt IE 9]>
             <script src="vendors/bootstrap-3.0.0-wip/assets/js/html5shiv.js"></script>
@@ -213,6 +214,7 @@
             <canvas id="cutCanvas" width="0" height="0"></canvas>
         </div>
         <script language="JavaScript">
+            // TODO: mov this to ui.js
             function swapTab(tab) {
                 $(".general-content").hide();
                 $("#"+tab.attr("rel")).fadeIn("slow");
@@ -260,6 +262,5 @@
                 angMsg.send("cut", 1); 
            });
         </script>
-        <script type="text/javascript" src="js/st_ui.js"></script>
    </body>
 </html>
